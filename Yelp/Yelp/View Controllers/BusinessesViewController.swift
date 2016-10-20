@@ -9,15 +9,21 @@
 
 import UIKit
 import MBProgressHUD
+import GoogleMaps
 
 class BusinessesViewController: UIViewController {
     var businesses: [Business]!
     var searchBar:UISearchBar!
     var isMoreLoadingData:Bool = false
+    var indicatorLoading:UIActivityIndicatorView!
+    var currentSearchKey:String!
+    var currentBusiness:Business!
     @IBOutlet weak var restaurantTableView: UITableView!
     
+    @IBOutlet weak var mapView: GMSMapView!
     @IBOutlet weak var resultLabel: UILabel!
     
+    @IBOutlet weak var mapButton: UIBarButtonItem!
     override func viewDidLoad() {
         super.viewDidLoad()
         self.resultLabel.isHidden = true
@@ -34,10 +40,28 @@ class BusinessesViewController: UIViewController {
         self.restaurantTableView.dataSource = self
         self.restaurantTableView.delegate = self
         
+        self.mapView.delegate = self
+        self.mapView.isHidden = true
+        
+        self.createIndicatorLoading()
+        
         //default search
         search(keyword: "restaurant")
     }
     
+    @IBAction func onMapButtonTapped(_ sender: AnyObject) {
+        if mapView.isHidden{
+            mapView.isHidden = false
+            restaurantTableView.isHidden = true
+            mapButton.image = UIImage(named: "list")
+        }
+        else{
+            mapView.isHidden = true
+            restaurantTableView.isHidden = false
+            mapButton.image = UIImage(named: "map")
+
+        }
+    }
     @IBAction func onTapScreen(_ sender: AnyObject) {
         self.searchBar.endEditing(true)
     }
@@ -54,12 +78,17 @@ class BusinessesViewController: UIViewController {
             self.resultLabel.text = message
             self.resultLabel.isHidden = ishidden
             self.restaurantTableView.isHidden = true
+            self.mapView.isHidden = true
         }
         else{
             self.resultLabel.isHidden = ishidden
             self.restaurantTableView.isHidden = false
         }
         
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let detailsVC = segue.destination as! DetailsViewController
+        detailsVC.business = currentBusiness
     }
 }
 
@@ -76,6 +105,20 @@ extension BusinessesViewController: UITableViewDelegate, UITableViewDataSource{
         let cell = tableView.dequeueReusableCell(withIdentifier: "BussinessCell") as! BussinessCell
         cell.bussiness = businesses[indexPath.row]
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        currentBusiness = businesses[indexPath.row]
+        return indexPath
+    }
+    
+    func createIndicatorLoading(){
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: restaurantTableView.superview!.frame.width, height: 50))
+        self.indicatorLoading = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+        self.indicatorLoading.center = footerView.center
+        self.indicatorLoading.isHidden = true
+        footerView.addSubview(self.indicatorLoading)
+        self.restaurantTableView.tableFooterView = footerView
     }
 }
 
@@ -94,7 +137,7 @@ extension BusinessesViewController:UISearchBarDelegate{
     func search(keyword:String, offset:Int = 0){
         MBProgressHUD.showAdded(to: self.view, animated: true)
         setLabelNotice(ishidden: false, message: "")
-        loadData(keyword: keyword)
+        getData(keyword: keyword, offset: offset)
         
 
     }
@@ -102,39 +145,39 @@ extension BusinessesViewController:UISearchBarDelegate{
         self.businesses = [Business]()
     }
     
-    func loadData(keyword:String){
-        Business.search(with: keyword, offset: 0, limit: 20) { (businesses: [Business]?, total:Int? ,error: Error?) in
-            if let businesses = businesses {
-                self.businesses = businesses
-                
-                self.restaurantTableView.reloadData()
-                self.isMoreLoadingData = false
-                if businesses.count == 0{
-                    self.setLabelNotice(ishidden: false, message: "No result!")
-                }
-                else{
-                    self.setLabelNotice(ishidden: true, message: "")
-                    let top = NSIndexPath(row: 0, section: 0)
-                    self.restaurantTableView.scrollToRow(at: top as IndexPath, at: .top, animated: true)
-                }
-            
-                MBProgressHUD.hide(for: self.view, animated: true)
-            }
+    func getData(keyword:String, offset:Int){
+        if isMoreLoadingData{
+            self.indicatorLoading.isHidden = false
+            self.indicatorLoading.startAnimating()
         }
-    }
-    
-    func loadMoreData(keyword:String, offset:Int){
-        MBProgressHUD.showAdded(to: self.view, animated: true)
+        
         Business.search(with: keyword, offset: offset, limit: 20) { (businesses: [Business]?, total:Int? ,error: Error?) in
             if let businesses = businesses {
-                if self.businesses != nil{
-                    self.businesses.append(contentsOf: businesses)
+               
+                if !self.isMoreLoadingData{
+                    self.businesses = businesses
+                    if businesses.count == 0{
+                        self.setLabelNotice(ishidden: false, message: "No result!")
+                    }
+                    else{
+                        self.restaurantTableView.reloadData()
+                        self.setLabelNotice(ishidden: true, message: "")
+                        let top = NSIndexPath(row: 0, section: 0)
+                        self.restaurantTableView.scrollToRow(at: top as IndexPath, at: .top, animated: true)
+                    }
+
                 }
                 else{
-                    self.businesses = businesses
+                    if self.businesses != nil{
+                        self.businesses.append(contentsOf: businesses)
+                    }
+                    
+                    self.indicatorLoading.isHidden = true
+                    self.indicatorLoading.stopAnimating()
                 }
                 self.restaurantTableView.reloadData()
                 self.isMoreLoadingData = false
+                self.createMarkers()
                 MBProgressHUD.hide(for: self.view, animated: true)
             }
         }
@@ -151,8 +194,41 @@ extension BusinessesViewController:UIScrollViewDelegate{
             let scrollViewOffsetThreshold = scrollViewContentHeight - restaurantTableView.bounds.size.height
             if scrollView.contentOffset.y > scrollViewOffsetThreshold && restaurantTableView.isDragging{
                 isMoreLoadingData = true
-                loadMoreData(keyword: searchBar.text!, offset: businesses.count)
+                getData(keyword: searchBar.text!, offset: businesses.count)
             }
         }
+    }
+}
+
+extension BusinessesViewController: GMSMapViewDelegate{
+    
+    func mapView(_ mapView: GMSMapView, markerInfoWindow marker: GMSMarker) -> UIView? {
+        let business = marker.userData as! Business
+        let infoWindow = Bundle.main.loadNibNamed("InfoWindow", owner: self, options: nil)?.first! as! InfoWindow
+        infoWindow.business = business
+        return infoWindow
+    }
+    func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
+        self.currentBusiness = marker.userData as! Business
+        self.performSegue(withIdentifier: "SegueDetails", sender: self)
+    }
+    func createMarkers(){
+        mapView.clear()
+        
+        if businesses.count > 0 {
+            let camera = GMSCameraPosition.camera(withLatitude: (businesses[0].resLocation?.latitude!)!, longitude: (businesses[0].resLocation?.longitude!)!, zoom: 15)
+            mapView.camera = camera
+            mapView.isMyLocationEnabled = true
+            
+            // Create maker for each business
+            for business in businesses {
+                let marker = GMSMarker()
+                marker.userData = business
+                marker.position = CLLocationCoordinate2DMake((business.resLocation?.latitude!)!, (business.resLocation?.longitude!)!)
+                //marker.icon = createMarkerIcon(i + 1)
+                marker.map = mapView
+            }
+        }
+
     }
 }

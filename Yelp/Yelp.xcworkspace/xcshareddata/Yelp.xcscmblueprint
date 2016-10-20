@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "2AE0EE5D4CD14E185A65F5920119D59BDB894F37",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "48B3FD3282AE6323310766963049AB1E21C64737" : 9223372036854775807,
+    "2AE0EE5D4CD14E185A65F5920119D59BDB894F37" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "1FA01D24-098B-43F3-9CB2-0BD19F3F011B",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "48B3FD3282AE6323310766963049AB1E21C64737" : "..",
+    "2AE0EE5D4CD14E185A65F5920119D59BDB894F37" : "Yelp\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Yelp",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Yelp\/Yelp.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/quochuyngo\/Yelp.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "2AE0EE5D4CD14E185A65F5920119D59BDB894F37"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/quochuyngo\/TipCalculator.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "48B3FD3282AE6323310766963049AB1E21C64737"
+    }
+  ]
+}
