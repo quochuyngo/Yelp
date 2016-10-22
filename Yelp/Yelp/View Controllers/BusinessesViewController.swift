@@ -15,6 +15,7 @@ class BusinessesViewController: UIViewController {
     var businesses: [Business]!
     var searchBar:UISearchBar!
     var isMoreLoadingData:Bool = false
+    var isNavigateDetailsView:Bool = false
     var indicatorLoading:UIActivityIndicatorView!
     var currentSearchKey:String!
     var currentBusiness:Business!
@@ -47,6 +48,10 @@ class BusinessesViewController: UIViewController {
         
         //default search
         search(keyword: "restaurant")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        isNavigateDetailsView = false
     }
     
     @IBAction func onMapButtonTapped(_ sender: AnyObject) {
@@ -87,8 +92,15 @@ class BusinessesViewController: UIViewController {
         
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let detailsVC = segue.destination as! DetailsViewController
-        detailsVC.business = currentBusiness
+        if isNavigateDetailsView{
+            let detailsVC = segue.destination as! DetailsViewController
+            detailsVC.business = currentBusiness
+        }
+        else{
+            let navVC = segue.destination as! UINavigationController
+            let filterVC = navVC.topViewController as! FilterViewController
+            filterVC.delegate = self
+        }
     }
 }
 
@@ -108,6 +120,7 @@ extension BusinessesViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        isNavigateDetailsView = true
         currentBusiness = businesses[indexPath.row]
         return indexPath
     }
@@ -137,7 +150,7 @@ extension BusinessesViewController:UISearchBarDelegate{
     func search(keyword:String, offset:Int = 0){
         MBProgressHUD.showAdded(to: self.view, animated: true)
         setLabelNotice(ishidden: false, message: "")
-        getData(keyword: keyword, offset: offset)
+        getData(keyword: keyword, offset: offset, categories: nil)
         
 
     }
@@ -145,13 +158,14 @@ extension BusinessesViewController:UISearchBarDelegate{
         self.businesses = [Business]()
     }
     
-    func getData(keyword:String, offset:Int){
+    func getData(keyword:String, offset:Int, categories:[String]?){
         if isMoreLoadingData{
             self.indicatorLoading.isHidden = false
             self.indicatorLoading.startAnimating()
         }
         
-        Business.search(with: keyword, offset: offset, limit: 20) { (businesses: [Business]?, total:Int? ,error: Error?) in
+        Business.search(with: keyword, offset: offset, limit: 20, sort: nil, categories: categories, deals: nil){
+            (businesses: [Business]?, total:Int? ,error: Error?) in
             if let businesses = businesses {
                
                 if !self.isMoreLoadingData{
@@ -194,7 +208,7 @@ extension BusinessesViewController:UIScrollViewDelegate{
             let scrollViewOffsetThreshold = scrollViewContentHeight - restaurantTableView.bounds.size.height
             if scrollView.contentOffset.y > scrollViewOffsetThreshold && restaurantTableView.isDragging{
                 isMoreLoadingData = true
-                getData(keyword: searchBar.text!, offset: businesses.count)
+                getData(keyword: searchBar.text!, offset: businesses.count, categories: nil)
             }
         }
     }
@@ -209,6 +223,7 @@ extension BusinessesViewController: GMSMapViewDelegate{
         return infoWindow
     }
     func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
+        self.isNavigateDetailsView = true
         self.currentBusiness = marker.userData as! Business
         self.performSegue(withIdentifier: "SegueDetails", sender: self)
     }
@@ -225,10 +240,15 @@ extension BusinessesViewController: GMSMapViewDelegate{
                 let marker = GMSMarker()
                 marker.userData = business
                 marker.position = CLLocationCoordinate2DMake((business.resLocation?.latitude!)!, (business.resLocation?.longitude!)!)
-                //marker.icon = createMarkerIcon(i + 1)
                 marker.map = mapView
             }
         }
 
+    }
+}
+
+extension BusinessesViewController : FilterViewControllerDelegate{
+    func filterViewController(filterViewController: FilterViewController, didUpdateFilters filters: [String]) {
+        getData(keyword: searchBar.text!, offset: 0, categories: filters)
     }
 }
