@@ -150,7 +150,7 @@ extension BusinessesViewController:UISearchBarDelegate{
     func search(keyword:String, offset:Int = 0){
         MBProgressHUD.showAdded(to: self.view, animated: true)
         setLabelNotice(ishidden: false, message: "")
-        getData(keyword: keyword, offset: offset, categories: nil)
+        getData(keyword: keyword, offset: offset)
         
 
     }
@@ -158,7 +158,7 @@ extension BusinessesViewController:UISearchBarDelegate{
         self.businesses = [Business]()
     }
     
-    func getData(keyword:String, offset:Int, categories:[String]?){
+    func getData(keyword:String, offset:Int, categories:[String]? = nil, sort:String? = nil, deals:Bool? = false , distance:String? = nil){
         if isMoreLoadingData{
             self.indicatorLoading.isHidden = false
             self.indicatorLoading.startAnimating()
@@ -248,7 +248,26 @@ extension BusinessesViewController: GMSMapViewDelegate{
 }
 
 extension BusinessesViewController : FilterViewControllerDelegate{
-    func filterViewController(filterViewController: FilterViewController, didUpdateFilters filters: [String]) {
-        getData(keyword: searchBar.text!, offset: 0, categories: filters)
+    func filterViewController(filterViewController: FilterViewController, didUpdateFilters filters: [String:AnyObject]) {
+        var deals:Bool = false
+        if let value = filters["deals_filter"]{
+            deals = value as! Bool
+        }
+        
+        var categories:[String]? = nil
+        if let value = filters["category_filter"]{
+            categories = (value as? [String])!
+         }
+         
+        var distance:String = ""
+        if let value = filters["radius_filter"]{
+            distance = (value as? String)!
+         }
+        var sortBy:String = ""
+        if let value = filters["sort"]{
+            sortBy = (value as? String)!
+        }
+        MBProgressHUD.showAdded(to: self.view, animated: true)
+        getData(keyword: searchBar.text!, offset: 0, categories: categories, sort:sortBy, deals:deals, distance: distance)
     }
 }

@@ -164,11 +164,11 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="52" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="NJV-QS-uiJ">
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CategoryCell" rowHeight="52" id="uzQ-PR-nVM" customClass="CategoryCell" customModule="Yelp" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="52"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CategoryCell" rowHeight="40" id="uzQ-PR-nVM" customClass="CategoryCell" customModule="Yelp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="40"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="uzQ-PR-nVM" id="NtU-gs-oST">
-                                            <frame key="frameInset" width="375" height="51"/>
+                                            <frame key="frameInset" width="375" height="39"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kka-DW-rGh">
@@ -194,11 +194,11 @@
                                             <outlet property="onSwitch" destination="kka-DW-rGh" id="R4o-bi-7Ab"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MenuContextCell" id="TuC-a6-3Sy" customClass="MenuContextCell" customModule="Yelp" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="80" width="375" height="52"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MenuContextCell" rowHeight="40" id="TuC-a6-3Sy" customClass="MenuContextCell" customModule="Yelp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="68" width="375" height="40"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TuC-a6-3Sy" id="QlE-t2-p0O">
-                                            <frame key="frameInset" width="375" height="51"/>
+                                            <frame key="frameInset" width="375" height="39"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Auto" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TE1-zo-9LA">
@@ -208,8 +208,8 @@
                                                 </label>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="arrow_down" translatesAutoresizingMaskIntoConstraints="NO" id="qfi-rb-uHu">
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="24" id="4KK-5o-MhN"/>
-                                                        <constraint firstAttribute="height" constant="24" id="cUD-af-1hL"/>
+                                                        <constraint firstAttribute="width" constant="18" id="4KK-5o-MhN"/>
+                                                        <constraint firstAttribute="height" constant="16" id="cUD-af-1hL"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -217,7 +217,7 @@
                                                 <constraint firstItem="TE1-zo-9LA" firstAttribute="leading" secondItem="QlE-t2-p0O" secondAttribute="leading" constant="10" id="EIz-vS-AJz"/>
                                                 <constraint firstItem="TE1-zo-9LA" firstAttribute="centerY" secondItem="QlE-t2-p0O" secondAttribute="centerY" id="Vs7-HJ-XPF"/>
                                                 <constraint firstItem="qfi-rb-uHu" firstAttribute="centerY" secondItem="QlE-t2-p0O" secondAttribute="centerY" id="Y50-4s-JLh"/>
-                                                <constraint firstAttribute="trailing" secondItem="qfi-rb-uHu" secondAttribute="trailing" constant="10" id="dIk-wy-9Hp"/>
+                                                <constraint firstAttribute="trailing" secondItem="qfi-rb-uHu" secondAttribute="trailing" constant="16" id="dIk-wy-9Hp"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
@@ -367,7 +367,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="p5f-rH-aey" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="eDP-7t-YrX">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="eDP-7t-YrX">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -385,7 +385,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ZOI-D2-0TE" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="972-WV-u4q">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="972-WV-u4q">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

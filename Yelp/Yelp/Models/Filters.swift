@@ -9,33 +9,32 @@
 import UIKit
 
 class Filters{
-    var filters = [
+     var filters = [
         
-        Filter(name: "Popular",
+        Filter(name: "Popular", code: "deals_filter",
                options: [
-                Option(name: "Offering a deal", code: "deals_filter", value: "1")],
+                Option(name: "Offering a deal", selected: false)],
                type: FilterType.switchControl),
         
         Filter(name: "Sort by", code: "sort",
-               options: [Option(name: "Best Matched", value: "0"),
-                         Option(name: "Distance", value: "1"),
-                         Option(name: "Rating", value: "2")],
+               options: [Option(name: "Best Matched", value: "0", selected: true),
+                         Option(name: "Distance", value: "1", selected: false),
+                         Option(name: "Rating", value: "2", selected: false)],
                type: FilterType.menuContextControl),
         Filter(name: "Distance", code: "radius_filter",
-               options: [Option(name: "Auto", value: ""),
-                         Option(name: "1 mile", value: "1"),
-                         Option(name:"2 miles", value: "2"),
-                         Option(name:"5 miles", value: "5")],
+               options: [Option(name: "Auto", value: "", selected: true),
+                         Option(name: "1 mil", value: "1609", selected: false),
+                         Option(name:"5 mil", value: "8045", selected: false),
+                         Option(name:"10 mil", value: "16090", selected: false)],
                type: FilterType.menuContextControl),
         Filter(name: "Category", code: "category_filter",
                options: Filters.getCategories(),
             type: FilterType.switchControl)
     ]
-    
     static func getCategories()->[Option]{
         var options = [Option]()
         for category in Category.getCategories(){
-            let option = Option(name: category["name"], value: category["code"])
+            let option = Option(name: category["name"], value: category["code"], selected: false)
             options.append(option)
         }
         return options
@@ -60,14 +59,28 @@ class Option{
     var code:String!
     var value:String!
     var selected:Bool!
+    var isCollapse:Bool!
     
-    init(name:String?, code:String? = nil, value:String? = nil, selected:Bool? = nil){
+    init(name:String?, code:String? = nil, value:String? = nil, selected:Bool? = nil, isCollapse:Bool? = nil){
         self.name = name
         self.code = code
         self.value = value
         self.selected = selected
+        self.isCollapse = isCollapse
     }
 }
+
+class Singleton{
+    static let sharedInstance = Singleton()
+    var filters:Filters!
+    private init(){
+        filters = Filters()
+    }
+    func getFilters()->[Filter]{
+        return filters.filters
+    }
+}
+
 enum FilterType{
     case switchControl, menuContextControl
 }
